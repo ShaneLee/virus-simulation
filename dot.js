@@ -9,6 +9,9 @@ class Dot {
 		this.canvas = canvas
 		this.size = size
 		this.infected = infected
+		this.hasBeenInfected = infected
+		this.recovery = infected ? generateRecoveryTime() : null
+		this.recovered = false
 	}
 
 	move() {
@@ -30,11 +33,31 @@ class Dot {
 	}
 
 	infect() {
-		this.infected = true
-		this.colour = color(255, 0, 0)
+		if (!this.hasBeenInfected) {
+			this.infected = true
+			this.hasBeenInfected = true
+			this.colour = color(255, 0, 0)
+			this.recovery = generateRecoveryTime()
+		}
+	}
+
+	hasRecovered() {
+		if (this.infected && this.recovery && new Date().getTime() > this.recovery) {
+			this.recover()
+		}
+	}
+
+	recover() {
+		this.colour = color(0, 255, 0)
+		this.infected = false
+		this.recovered = true
 	}
 
 
+}
+
+function generateRecoveryTime() {
+	return new Date().getTime() + rand(10000)
 }
 
 function hitBoundary(dot, axis) {
